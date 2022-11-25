@@ -60,7 +60,6 @@ public class StaticTypeCheck {
             else if (u.op.intOp( ))    return (Type.INT);
             else if (u.op.floatOp( )) return (Type.FLOAT);
             else if (u.op.charOp( ))  return (Type.CHAR);
-
         }
         throw new IllegalArgumentException("should never reach here");
     } 
@@ -94,24 +93,27 @@ public class StaticTypeCheck {
             return;
         }
 
-        /** */
+        /** Unary Expression 일 때 type check */
         if (e instanceof Unary) {
             Unary u = (Unary) e;
-            Type type = typeOf(u.term, tm);
-            V(u.term, tm);
-            if (u.op.NotOp()) {
-                check((type == Type.BOOL), "type error for " + u.op);
-            }
-            else if (u.op.NegateOp()) {
-                check((type == (Type.INT) || type == (Type.FLOAT)), "type error for " + u.op);
-            }
-            else {
+            Type typ = typeOf(u.term, tm); //term의 타입 저장
+            V(u.term, tm); //term이 Type Map에 있는지 검사
+            if (u.op.NotOp()) // !을 가진 term 이 bool type인지 check
+                check((typ == Type.BOOL), "type error for " + u.op);
+            else if (u.op.NegateOp()) // -을 가진 term 이 int 또는 float type 인지 check
+                check((typ == Type.INT || typ == Type.FLOAT), "type error for " + u.op);
+            else if (u.op.intOp()) // (int)을 가진 term 이 char 또는 float type인지 check
+                check((typ == Type.CHAR || typ == Type.FLOAT), "type error for " + u.op);
+            else if (u.op.floatOp()) // (float)을 가진 term 이 int type인지 check
+                check((typ == Type.INT), "type error for " + u.op);
+            else if (u.op.charOp()) // (char)을 가진 term 이 int type인지 check
+                check((typ == Type.INT), "type error for " + u.op);
+            else
                 throw new IllegalArgumentException("should never reach here");
-            }
             return;
         }
-        // student exercise
         throw new IllegalArgumentException("should never reach here");
+        // student exercise
     }
 
     public static void V (Statement s, TypeMap tm) {
@@ -139,39 +141,46 @@ public class StaticTypeCheck {
             return;
         }
 
-        /** */
+        /** Conditional statement 일 때 */
         if (s instanceof Conditional) {
             Conditional c = (Conditional)s;
-            V(c.test, tm);
-            Type testtype = typeOf(c.test, tm);
-            if (testtype == Type.BOOL) {
+            V(c.test, tm); //조건문일 때 test check
+            Type testType = typeOf(c.test, tm);
+
+            /** test문이 bool type이면 thenbranch 와 elsebranch check */
+            if (testType == Type.BOOL) {
                 V(c.thenbranch, tm);
                 V(c.elsebranch, tm);
-                return;
-            }else {
-                check( false, "poorly typed if in Conditional: " + c.test);
+            }else { /** test type이 bool type이 아닐 경우 에러 발생 */
+                check( false, "non-bool type Conditional test: " + c.test);
             }
+            return;
         }
 
+        /** Loop statement 일 때 */
         if (s instanceof Loop) {
             Loop l = (Loop)s;
-            V(l.test, tm);
-            Type testtype = typeOf(l.test, tm);
-            if (testtype == Type.BOOL) {
+            V(l.test, tm); //반복문일 때 test check
+            Type testType = typeOf(l.test, tm);
+
+            if (testType == Type.BOOL) /** test문이 bool type이면 body check */
                 V(l.body, tm);
-            }else {
-                check ( false, "poorly typed test in while Loop in Conditional: " + l.test);
-            }
+            else  /** test type이 bool type이 아닐 경우 에러 발생 */
+                check ( false, "non-bool type Loop test : " + l.test);
+
             return;
         }
 
+        /** Block statement 일 때 */
         if (s instanceof Block) {
             Block b = (Block)s;
-            for(Statement i : b.members) {
+
+            /** b.members check */
+            for(Statement i : b.members)
                 V(i, tm);
-            }
             return;
         }
+
         // student exercise
         throw new IllegalArgumentException("should never reach here");
     }

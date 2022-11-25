@@ -29,26 +29,24 @@ public class TypeTransformer {
             throw new IllegalArgumentException("should never reach here");
         }
 
-        /** */
+        /** Unary Expression 일 경우 */
         if (e instanceof Unary) {
             Unary u = (Unary) e;
-            Type type = StaticTypeCheck.typeOf(u.term, tm);
-            Expression t0 = T (u.term, tm);
-            if ((type == Type.BOOL) && (u.op.NotOp()))
-                return new Unary(u.op.boolMap(u.op.val), t0);
-            else if ((type == Type.FLOAT) && (u.op.NegateOp()))
-                return new Unary(u.op.floatMap(u.op.val), t0);
-            else if ((type == Type.INT) && (u.op.NegateOp()))
-                return new Unary(u.op.intMap(u.op.val), t0);
-//            else if ((u.op.I2F) || (u.op.I2C)) {
-//                if (type == Type.INT)
-//                    return new Unary(u.op.intMap(u.op.val), t0);
-//            }
-//            else if ((type == Type.FLOAT) && (u.op.F2I))
-//                return new Unary(u.op.floatMap(u.op.val), t0);
-//            else if ((type == Type.CHAR) && (u.op.C2I))
-//                return new Unary(u.op.charMap(u.op.val), t0);
-//            throw new IllegalArgumentException("should never reach here");
+            Type typ = StaticTypeCheck.typeOf(u.term, tm);
+            Expression t = T (u.term, tm);
+            if ((typ == Type.BOOL) && (u.op.NotOp())) // NOT 일 경우
+                return new Unary(u.op.boolMap(u.op.val), t);
+            else if ((typ == Type.FLOAT) && (u.op.NegateOp())) // FLOAT_NEG 일 경우
+                return new Unary(u.op.floatMap(u.op.val), t);
+            else if ((typ == Type.INT) && (u.op.NegateOp())) // INT_NEG 일 경우
+                return new Unary(u.op.intMap(u.op.val), t);
+            else if (typ == Type.INT && ((u.op.floatOp()) || (u.op.charOp()))) //I2F || I2C 일 경우
+                return new Unary(u.op.intMap(u.op.val), t);
+            else if ((typ == Type.FLOAT) && (u.op.intOp())) //F2I 일 경우
+                return new Unary(u.op.floatMap(u.op.val), t);
+            else if ((typ == Type.CHAR) && (u.op.intOp())) //C2I 일 경우
+                return new Unary(u.op.charMap(u.op.val), t);
+            throw new IllegalArgumentException("should never reach here");
         }
         // student exercise
         throw new IllegalArgumentException("should never reach here");
