@@ -28,6 +28,8 @@ public class TypeTransformer {
                 return new Binary(b.op.boolMap(b.op.val), t1,t2);
             throw new IllegalArgumentException("should never reach here");
         }
+
+        /** */
         if (e instanceof Unary) {
             Unary u = (Unary) e;
             Type type = StaticTypeCheck.typeOf(u.term, tm);
@@ -38,7 +40,15 @@ public class TypeTransformer {
                 return new Unary(u.op.floatMap(u.op.val), t0);
             else if ((type == Type.INT) && (u.op.NegateOp()))
                 return new Unary(u.op.intMap(u.op.val), t0);
-            throw new IllegalArgumentException("should never reach here");
+//            else if ((u.op.I2F) || (u.op.I2C)) {
+//                if (type == Type.INT)
+//                    return new Unary(u.op.intMap(u.op.val), t0);
+//            }
+//            else if ((type == Type.FLOAT) && (u.op.F2I))
+//                return new Unary(u.op.floatMap(u.op.val), t0);
+//            else if ((type == Type.CHAR) && (u.op.C2I))
+//                return new Unary(u.op.charMap(u.op.val), t0);
+//            throw new IllegalArgumentException("should never reach here");
         }
         // student exercise
         throw new IllegalArgumentException("should never reach here");
@@ -67,7 +77,8 @@ public class TypeTransformer {
             StaticTypeCheck.check( ttype == srctype,
                       "bug in assignment to " + target);
             return new Assignment(target, src);
-        } 
+        }
+
         if (s instanceof Conditional) {
             Conditional c = (Conditional)s;
             Expression test = T (c.test, tm);
@@ -93,17 +104,18 @@ public class TypeTransformer {
     
 
     public static void main(String args[]) {
+        System.out.println("Begin parsing... " + args[0] + "\n");
         Parser parser  = new Parser(new Lexer(args[0]));
         Program prog = parser.program();
-         prog.display();           // student exercise
-        System.out.println("\nBegin type checking...");
+        prog.display();           // student exercise
+        System.out.println("\nBegin type checking..."  + args[0] + "\n");
         System.out.println("Type map:");
         TypeMap map = StaticTypeCheck.typing(prog.decpart);
         map.display();    // student exercise
         StaticTypeCheck.V(prog);
         Program out = T(prog, map);
-        System.out.println("Output AST");
-         out.display();    // student exercise
+        System.out.println("Transformed Abstract Syntax Tree\n");
+        out.display();    // student exercise
     } //main
 
     } // class TypeTransformer

@@ -60,6 +60,7 @@ public class StaticTypeCheck {
             else if (u.op.intOp( ))    return (Type.INT);
             else if (u.op.floatOp( )) return (Type.FLOAT);
             else if (u.op.charOp( ))  return (Type.CHAR);
+
         }
         throw new IllegalArgumentException("should never reach here");
     } 
@@ -93,15 +94,16 @@ public class StaticTypeCheck {
             return;
         }
 
+        /** */
         if (e instanceof Unary) {
             Unary u = (Unary) e;
-            Type type = typeOf(u.term, tm); //start here
+            Type type = typeOf(u.term, tm);
             V(u.term, tm);
             if (u.op.NotOp()) {
-                check((type == Type.BOOL), "type error for NotOp " + u.op);
+                check((type == Type.BOOL), "type error for " + u.op);
             }
             else if (u.op.NegateOp()) {
-                check((type == (Type.INT) || type == (Type.FLOAT)), "type error for NegateOp " + u.op);
+                check((type == (Type.INT) || type == (Type.FLOAT)), "type error for " + u.op);
             }
             else {
                 throw new IllegalArgumentException("should never reach here");
@@ -137,6 +139,7 @@ public class StaticTypeCheck {
             return;
         }
 
+        /** */
         if (s instanceof Conditional) {
             Conditional c = (Conditional)s;
             V(c.test, tm);
@@ -149,6 +152,7 @@ public class StaticTypeCheck {
                 check( false, "poorly typed if in Conditional: " + c.test);
             }
         }
+
         if (s instanceof Loop) {
             Loop l = (Loop)s;
             V(l.test, tm);
@@ -160,6 +164,7 @@ public class StaticTypeCheck {
             }
             return;
         }
+
         if (s instanceof Block) {
             Block b = (Block)s;
             for(Statement i : b.members) {
@@ -174,7 +179,7 @@ public class StaticTypeCheck {
     public static void main(String args[]) {
         Parser parser  = new Parser(new Lexer(args[0]));
         Program prog = parser.program();
-        prog.display();           // student exercise
+        prog.display();   // student exercise
         System.out.println("\nBegin type checking...");
         System.out.println("Type map:");
         TypeMap map = typing(prog.decpart);
