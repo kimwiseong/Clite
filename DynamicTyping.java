@@ -22,7 +22,7 @@ public class DynamicTyping extends Semantics {
                     return new IntValue(v1.intValue( ) - v2.intValue( ));
                 if (op.val.equals(Operator.TIMES)) 
                     return new IntValue(v1.intValue( ) * v2.intValue( ));
-                if (op.val.equals(Operator.DIV)) 
+                if (op.val.equals(Operator.DIV))
                     return new IntValue(v1.intValue( ) / v2.intValue( ));
             }
             /** float type의 산술 연산*/
@@ -113,19 +113,17 @@ public class DynamicTyping extends Semantics {
             return (Value)(sigma.get(e));
         }
 
-        /** for Binary*/
+        //... for Binary
         if (e instanceof Binary) {
             Binary b = (Binary) e; //이항 연산자일 경우 applyBinary를 통해 값을 얻은 후 반환
             return applyBinary(b.op, M(b.term1, sigma), M(b.term2, sigma));
         }
-        /** for Unary*/
+        //... for Unary
         if (e instanceof Unary) {
             Unary u = (Unary) e; //단항 연산자일 경우 applyUnary를 통해 값을 얻은 후 반환
             return applyUnary(u.op, M(u.term, sigma));
         }
         // student exercise
-        //... for Binary
-        //... for Unary
 
         throw new IllegalArgumentException("should never reach here");
     }

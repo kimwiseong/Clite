@@ -158,20 +158,18 @@ public class Semantics {
         if (e instanceof Variable) 
             return (Value)(state.get(e));
 
-        /** for Binary*/
+        //... for Binary
         if (e instanceof Binary) {
             Binary b = (Binary) e; //이항 연산자일 경우 applyBinary를 통해 값을 얻은 후 반환
             return applyBinary(b.op, M(b.term1, state), M(b.term2, state));
         }
 
-        /** for Unary*/
+        //... for Unary
         if (e instanceof Unary) {
             Unary u = (Unary) e; //단항 연산자일 경우 applyUnary를 통해 값을 얻은 후 반환
             return applyUnary(u.op, M(u.term, state));
         }
         // student exercise
-        //... for Binary
-        //... for Unary
 
         throw new IllegalArgumentException("should never reach here");
     }

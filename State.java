@@ -11,13 +11,13 @@ public class State extends HashMap<Variable, Value> {
     }
     
     public State onion(Variable key, Value val) {
-        put(key, val); // Variable을 key로 Value value로 테이블에 저장
+        put(key, val); // Variable와 Value를 맵에 저장
         // student exercise
         return this;
     }
 
+    /** 저장된 state 출력 */
     void display() {
-        /** 저장된 state 출력 */
         int i = 0;
         System.out.print("{ ");
         for (Entry<Variable, Value> entry : entrySet()) {
