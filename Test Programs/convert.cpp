@@ -5,4 +5,4 @@ int main ( ) {
     c = 'a';
     i = 77;
     f = i - int(c);
-} 
+}
